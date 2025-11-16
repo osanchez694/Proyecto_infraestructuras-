@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Compra realizada - OZZIE</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        .logo-center {
+            font-family: "Impact", system-ui, sans-serif;
+            letter-spacing: 0.15em;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom">
+    <div class="container-fluid px-4">
+
+        <div class="d-flex align-items-center">
+            <a class="nav-link me-3 fw-semibold" th:href="@{/}">NUEVO 🔥</a>
+
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button"
+                   id="dropdownCategorias" data-bs-toggle="dropdown" aria-expanded="false">
+                    CATEGORÍAS
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownCategorias">
+                    <li th:each="cat : ${categories}">
+                        <a class="dropdown-item"
+                           th:href="@{'/categoria/' + ${cat.name}}"
+                           th:text="${cat.name}">CATEGORÍA</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mx-auto logo-center">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="Logo"
+                     style="height:40px; object-fit:contain;">
+            </a>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <a class="nav-link me-3 fw-semibold" th:href="@{/contacto}">CONTACTO</a>
+            <a class="nav-link fw-semibold" th:href="@{/carrito}">
+                CARRITO (<span th:text="${cartCount}">0</span>)
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-5">
+
+    <h1 class="mb-3">¡Gracias por tu compra! 🖤</h1>
+    <p class="lead">
+        Hemos recibido tu pedido. A continuación puedes ver el resumen.
+    </p>
+
+    <h4 class="mt-4">Resumen del pedido</h4>
+
+    <table class="table align-middle mt-3">
+        <thead class="table-light">
+        <tr>
+            <th>Producto</th>
+            <th>Talla</th>
+            <th>Cantidad</th>
+            <th>Precio unidad</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.product.name}"></td>
+            <td th:text="${item.size}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${#numbers.formatInteger(item.product.price, 0, 'POINT')}"></td>
+            <td th:text="${#numbers.formatInteger(item.product.price * item.quantity, 0, 'POINT')}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="mt-3 h5">
+        Total pagado:
+        <span th:text="${#numbers.formatInteger(totalCart, 0, 'POINT')}"></span>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/}" class="btn btn-dark">
+            Volver a la tienda
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

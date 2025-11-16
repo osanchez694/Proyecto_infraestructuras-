@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name}">Producto</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <style>
+        .logo-center {
+            font-family: "Impact", system-ui, sans-serif;
+            letter-spacing: 0.15em;
+        }
+        .size-box {
+            border: 1px solid #222;
+            padding: 6px 14px;
+            margin-right: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            background: white;
+        }
+        .size-box.selected {
+            background: black;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom">
+    <div class="container-fluid px-4">
+
+        <div class="d-flex align-items-center">
+            <a class="nav-link me-3 fw-semibold" th:href="@{/}">NUEVO 🔥</a>
+
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button"
+                   id="dropdownCategorias" data-bs-toggle="dropdown" aria-expanded="false">
+                    CATEGORÍAS
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownCategorias">
+                    <li th:each="cat : ${categories}">
+                        <a class="dropdown-item"
+                           th:href="@{'/categoria/' + ${cat.name}}"
+                           th:text="${cat.name}">CATEGORÍA</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mx-auto logo-center">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="Logo"
+                     style="height:40px; object-fit:contain;">
+            </a>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <a class="nav-link me-3 fw-semibold" th:href="@{/contacto}">CONTACTO</a>
+            <a class="nav-link fw-semibold" th:href="@{/carrito}">
+                CARRITO (<span th:text="${cartCount}">0</span>)
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-5">
+
+    <div class="row">
+
+        <!-- 🔙 Volver a la categoría -->
+        <div class="col-12 mb-3">
+            <a th:href="@{'/categoria/' + ${product.category}}"
+               style="display:inline-flex;align-items:center;gap:8px;
+                      text-decoration:none;color:#111;font-weight:600;">
+                &#8592; Volver a [[${product.category}]]
+            </a>
+        </div>
+
+        <!-- FOTO PRINCIPAL -->
+        <div class="col-md-6">
+            <img th:src="@{${product.imageMain}}"
+                 class="img-fluid rounded shadow">
+        </div>
+
+        <!-- INFORMACIÓN + FORMULARIO CARRITO -->
+        <div class="col-md-6">
+
+            <!-- FORMULARIO PARA ENVIAR AL CARRITO -->
+            <form th:action="@{/carrito/agregar}" method="post" id="cartForm">
+
+                <!-- ID del producto -->
+                <input type="hidden" name="productId" th:value="${product.id}"/>
+
+                <!-- Talla seleccionada (por defecto M) -->
+                <input type="hidden" name="size" id="sizeInput" value="M"/>
+
+                <!-- Cantidad -->
+                <input type="hidden" name="quantity" id="qtyInput" value="1"/>
+
+                <h2 th:text="${product.name}"></h2>
+                <h4>$<span th:text="${#numbers.formatInteger(product.price,0,'POINT')}"></span></h4>
+                <p><strong>Stock:</strong> <span th:text="${product.stock}"></span> disponibles</p>
+                <p><strong>Estilo:</strong> <span th:text="${product.fit}"></span></p>
+
+                <!-- TALLAS -->
+                <label class="fw-bold">Tamaño:</label>
+                <div class="d-flex mb-3">
+                    <button type="button" class="size-box" data-size="S">S</button>
+                    <button type="button" class="size-box selected" data-size="M">M</button>
+                    <button type="button" class="size-box" data-size="L">L</button>
+                    <button type="button" class="size-box" data-size="XL">XL</button>
+                </div>
+
+                <!-- CANTIDAD -->
+                <label class="fw-bold">Cantidad:</label>
+                <div class="input-group mb-3" style="width:150px;">
+                    <button type="button" class="btn btn-outline-dark" id="btnMinus">-</button>
+                    <input id="qtyDisplay" type="text" value="1"
+                           class="form-control text-center" readonly>
+                    <button type="button" class="btn btn-outline-dark" id="btnPlus">+</button>
+                </div>
+
+                <!-- BOTÓN CARRITO -->
+                <button type="submit" class="btn btn-dark btn-lg w-100">
+                    AGREGAR AL CARRITO
+                </button>
+
+                <hr>
+
+                <p th:text="${product.description}"></p>
+
+                <ul>
+                    <li>🚚 Envíos seguros, 3–4 días hábiles.</li>
+                    <li>🔁 Cambios y devoluciones fáciles.</li>
+                    <li>💳 Pagos con tarjeta, transferencia, etc.</li>
+                </ul>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // === MANEJAR TALLAS ===
+    const sizeButtons = document.querySelectorAll(".size-box");
+    const sizeInput = document.getElementById("sizeInput");
+
+    sizeButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            sizeButtons.forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            sizeInput.value = btn.dataset.size;
+        });
+    });
+
+    // === MANEJAR CANTIDAD ===
+    const btnMinus = document.getElementById("btnMinus");
+    const btnPlus = document.getElementById("btnPlus");
+    const qtyDisplay = document.getElementById("qtyDisplay");
+    const qtyInput = document.getElementById("qtyInput");
+
+    btnMinus.addEventListener("click", () => {
+        let v = parseInt(qtyDisplay.value || qtyDisplay.textContent);
+        if (v > 1) {
+            v--;
+            qtyDisplay.value = v;
+            qtyDisplay.textContent = v;
+            qtyInput.value = v;
+        }
+    });
+
+    btnPlus.addEventListener("click", () => {
+        let v = parseInt(qtyDisplay.value || qtyDisplay.textContent);
+        v++;
+        qtyDisplay.value = v;
+        qtyDisplay.textContent = v;
+        qtyInput.value = v;
+    });
+</script>
+
+</body>
+</html>
