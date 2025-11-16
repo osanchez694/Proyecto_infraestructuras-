@@ -30,7 +30,7 @@ public class StoreService {
 
         products.add(new Product(
                 1L, "CAMISETA TRIBAL", "CAMISETAS",
-                "/img/camiseta-tribal-back.jpg", "/img/camiseta-tribal-back.jpg",
+                "/img/camiseta0.jpg", "/img/camiseta-tribal-back.jpg",
                 100000, "Camiseta tribal original.", "Boxy fit",
                 List.of("S", "M", "L", "XL"),
                 10
